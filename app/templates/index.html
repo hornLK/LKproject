@@ -1,4 +1,30 @@
 {% extends "base.html" %}
+{% block content_wrapper %}
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+
+      <h1>
+	仪盘表
+        <small>dashboard</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+        <li class="active"><a href="{{ url_for("cmdb.index") }}">主页</a></li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <!--------------------------
+        | Your Page Content Here |
+        -------------------------->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% endblock %}
+
 {% block main_content %}
     <h1> Index</h1>
 {% endblock %}
