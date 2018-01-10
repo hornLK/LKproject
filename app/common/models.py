@@ -39,7 +39,7 @@ class User(UserMixin,db.Model):
         return User.query.get(int(user_id))
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.email
 
 ##--define group table
 class Group(db.Model):

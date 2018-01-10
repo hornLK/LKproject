@@ -7,7 +7,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLK-Index</title>
+  <title>
+    {% block title %}
+    AdminLK-Index
+    {% endblock %}
+  </title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <link rel="stylesheet" href="{{ url_for('static',filename='bootstrap/dist/css/bootstrap.min.css') }}">
@@ -187,32 +191,17 @@ desired effect
                 <img src="{{ url_for('static',filename='dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
 
                 <p>
-                  Alexander Pierce - Web Developer
-                  <small>Member since Nov. 2012</small>
+                  {{ current_user.email }}
+                  <small>部门：{{ current_user.department.departmentname }}</small>
                 </p>
-              </li>
-              <!-- Menu Body -->
-              <li class="user-body">
-                <div class="row">
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Followers</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Sales</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Friends</a>
-                  </div>
-                </div>
-                <!-- /.row -->
               </li>
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
+                  <a href="#" class="btn btn-default btn-flat">用户配置</a>
                 </div>
                 <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="{{ url_for("account.logout") }}" class="btn btn-default btn-flat">登出</a>
                 </div>
               </li>
             </ul>
@@ -284,14 +273,14 @@ desired effect
 	    </a>
 	</li>
         <li class="treeview">
-          <a href="#"><i class="fa fa-link"></i> <span>其他功能</span>
+          <a href="#"><i class="fa fa-link"></i> <span>资源管理</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
           </a>
           <ul class="treeview-menu">
 	    <li>
-		<a href="#">
+		<a href="{{ url_for("ipmage.index") }}">
 		    <i class="fa fa-ellipsis-h"></i> <span>IP管理</span>
 		    <span class="pull-right-container">
 		    <small class="label pull-right bg-green"></small>
