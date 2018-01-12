@@ -19,10 +19,12 @@ def create_app(config_name):
     from .IP_manager import ipmage as ipmage_blueprint
     from .common import errors as errors_blueprint
     from .common import  account as account_blueprint
+    from .api_1_0 import api   as api_blueprint
     app.register_blueprint(cmdb_blueprint,url_prefix='/cmdb')
     app.register_blueprint(errors_blueprint,url_prefix='/errors')
     app.register_blueprint(account_blueprint,url_prefix='/account')
     app.register_blueprint(ipmage_blueprint,url_prefix='/ipmage')
+    app.register_blueprint(api_blueprint,url_prefix='/api/v1.0')
 
     db.init_app(app)
     mail.init_app(app)
