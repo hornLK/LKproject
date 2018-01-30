@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% import "macro/page_macros.html" as page_macros %}
+{% block title%}
+    IP manager
+{% endblock %}
+{% block content_wrapper %}
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+
+      <h1>
+	IP列表
+        <small>IP List</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{{ url_for("ipmage.index") }}"><i class="fa fa-dashboard"></i>网络信息</a></li>
+        <li class="active"><a href=#>IP管理</a></li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <!--------------------------
+        | Your Page Content Here |
+        -------------------------->
+    <!-- table-->
+    <div class="container-fluid">
+	<div class="box">
+	  <div class="box-header with-border">
+	    <h3 class="box-title">网络列表</h3>
+	  </div>
+	  <div class="container-fluid">
+	    <div class="row">
+		<div class="col-xs-6 col-md-2">
+		    <a href="{{ url_for("ipmage.index") }}" class="btn btn-block btn-social btn-instagram">
+			<i class="fa fa-reply"></i> 返回网络列表
+	            </a>
+		</div>
+		<div class="col-xs-6 col-md-offset-1">
+		    <div class="row">
+			<div class="col-xs-6 col-md-3">
+			    <select class="form-control" style="width: 100%;" tabindex="-1" aria-hidden="true">
+				<option value="ip">IP =</option>
+				<option value="mac">MAC =</option>
+				<option value="ports">端口=</option>
+			    </select>
+			</div>
+			<div class="col-xs-6 col-md-6">
+			    <div class="input-group">
+				<input type="text" name="message" placeholder="Search" class="form-control">
+				<span class="input-group-btn">
+				    <button type="submit" class="btn btn-primary btn-flat">
+					<i class="fa fa-search"></i>
+					搜索
+				    </button>
+				</span>
+			    </div>
+			</div>
+		    </div>
+		</div>
+
+	    </div>
+	 </div>
+	  <!-- /.box-header -->
+	  <div class="box-body" style="height:450px">
+		<table class="table table-hover table-bordered" >
+		   <tbody><tr>
+		     <th>IP</th>
+		     <th>物理地址</th>
+		     <th>开放端口</th>
+		     <th>状态</th>
+		   </tr>
+		     {% for ip in ip_list %}
+		   <tr>
+		     <td>{{ loop.index }}.&nbsp;{{ ip.ip }}</td>
+		     <td>{{ ip.mac }}</td>
+		     <td>{{ ip.ports }}</td>
+		     <td>{{ ip.status}}</td>
+		   </tr>
+		     {% endfor%}
+		 </tbody></table>
+	  </div>
+	  <!-- /.box-body -->
+		<div class="box-footer clearfix">
+		  <ul class="pagination pagination-sm no-margin pull-right">
+		    {{ page_macros.pagination_widget(pagination,'ipmage.get_network') }}
+		  </ul>
+	       </div>
+	</div>
+    </div>
+    <!-- endtable-->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% endblock %}
+
+{% block script %}
+<script>
+$(function(){
+    $('#AddNetModal').modal(options)
+})
+</script>
+{% endblock %}
+

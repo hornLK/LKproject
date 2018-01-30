@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "macro/page_macros.html" as page_macros %}
 {% block title%}
     IP manager
 {% endblock %}
@@ -27,7 +28,7 @@
 	      <!-- small box -->
 	      <div class="small-box bg-green">
 		<div class="inner">
-		  <h3>53<sup style="font-size: 20px">%</sup></h3>
+		  <h3>{{ data.network_count }}<sup style="font-size: 20px"></sup></h3>
 
 		  <p>网络/vlan数</p>
 		</div>
@@ -42,9 +43,9 @@
 	      <!-- small box -->
 	      <div class="small-box bg-yellow">
 		<div class="inner">
-		  <h3>44</h3>
+		  <h3>{{data.active_ip}}</h3>
 
-		  <p>已使用总数</p>
+		  <p>已使用IP总数</p>
 		</div>
 		<div class="icon">
 		  <i class="ion ion-social-rss"></i>
@@ -57,9 +58,9 @@
 	      <!-- small box -->
 	      <div class="small-box bg-red">
 		<div class="inner">
-		  <h3>65</h3>
+		  <h3>{{ data.ip_count-data.active_ip}}</h3>
 
-		  <p>未使用总数</p>
+		  <p>未使用IP总数</p>
 		</div>
 		<div class="icon">
 		  <i class="ion ion-pie-graph"></i>
@@ -73,7 +74,7 @@
 	<div class="container-fluid">
 	  <div class="row">
 	    <div class="col-xs-6 col-md-2">
-	      <a class="btn btn-block btn-social btn-dropbox">
+	      <a class="btn btn-block btn-social btn-dropbox" data-toggle="modal" data-target="#AddNetModal">
 	      <i class="fa fa-plus"></i> &nbsp;&nbsp;添加网络</span>
 	      </a>
 	    </div>
@@ -90,6 +91,47 @@
 	  </div>
 	</div>
     <!--end button-->
+	<!-- Modal -->
+	<div class="modal fade" id="AddNetModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		<h4 class="modal-title" id="myModalLabel">添加网络</h4>
+	      </div>
+	      <div class="modal-body">
+		<!-- add net formi -->
+		<form action="{{ url_for("ipmage.add_network") }}" method="post">
+		    {{ add_NetworkForm.hidden_tag() }}
+		    <div class="box-body">
+		    <div class="form-group">
+		    <label for="netname">名称</label>
+		    {{ add_NetworkForm.netname(class="form-control",id="netname", placeholder="名称") }}
+		    </div>
+		    <div class="form-group">
+		    <label for="netnetwork">网段</label>
+		    {{ add_NetworkForm.network(class="form-control",id="netnetwork",placeholder="0.0.0.0/24") }}
+		    </div>
+		    <div class="form-group">
+		    <label for="netvlan">vlan</label>
+		    {{ add_NetworkForm.vlan(class="form-control",id="netvlan", placeholder="vlan标记") }}
+		    </div>
+		    <div class="form-group">
+		    <label for="netdesc">描述</label>
+		    {{ add_NetworkForm.desc(class="form-control",id="netdesc",placeholder="描述") }}
+		    </div>
+		    </div>
+	      </div>
+	      <div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+		{{ add_NetworkForm.submit(class="btn btn-primary") }}
+	      </div>
+	    </form>
+	    <!-- end form -->
+	    </div>
+	  </div>
+	</div>
+	<!-- end Modal -->
     <!-- table-->
     <div class="container-fluid">
 	<div class="box">
@@ -100,63 +142,35 @@
 	  <div class="box-body" style="height:400px">
 	    <table class="table table-hover table-bordered" >
 	      <tbody><tr>
+		<th>选择</th>
 		<th>网络名</th>
+		<th>vlan</th>
 		<th>备注用途</th>
-		<th>Progress</th>
+		<th>使用率</th>
 		<th style="width: 80px">IP使用率</th>
 	      </tr>
+	      {% for network in data.networks %}
 	      <tr>
-		<td>1.</td>
-		<td>Update software</td>
+		<td><input type="checkbox" id="network-{{ network.id }}"></td>
+		<td>{{ loop.index }}.&nbsp;{{ network.netname }}&nbsp;/&nbsp;{{ network.network }}<a href="{{ network.page_json().url }}">>>详情页</a></td>
+		<td>{{ network.vlan }}</td>
+		<td>{{ network.desc }}</td>
 		<td>
 		  <div class="progress progress-xs">
-		    <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+		    <div class="progress-bar progress-bar-primary" style="width:{{ network.active_ip*100//network.total_ip }}%"></div>
 		  </div>
 		</td>
-		<td><span class="badge bg-red">55%</span></td>
+		<td><span class="badge bg-red">{{ network.active_ip*100//network.total_ip }}%</span></td>
 	      </tr>
-	      <tr>
-		<td>2.</td>
-		<td>Clean database</td>
-		<td>
-		  <div class="progress progress-xs">
-		    <div class="progress-bar progress-bar-yellow" style="width: 70%"></div>
-		  </div>
-		</td>
-		<td><span class="badge bg-yellow">70%</span></td>
-	      </tr>
-	      <tr>
-		<td>3.</td>
-		<td>Cron job running</td>
-		<td>
-		  <div class="progress progress-xs progress-striped active">
-		    <div class="progress-bar progress-bar-primary" style="width: 30%"></div>
-		  </div>
-		</td>
-		<td><span class="badge bg-light-blue">30%</span></td>
-	      </tr>
-	      <tr>
-		<td>4.</td>
-		<td>Fix and squish bugs</td>
-		<td>
-		  <div class="progress progress-xs progress-striped active">
-		    <div class="progress-bar progress-bar-success" style="width: 90%"></div>
-		  </div>
-		</td>
-		<td><span class="badge bg-green">90%</span></td>
-	      </tr>
+              {% endfor %}
 	    </tbody></table>
 	  </div>
 	  <!-- /.box-body -->
-	  <div class="box-footer clearfix">
-	    <ul class="pagination pagination-sm no-margin pull-right">
-	      <li><a href="#">«</a></li>
-	      <li><a href="#">1</a></li>
-	      <li><a href="#">2</a></li>
-	      <li><a href="#">3</a></li>
-	      <li><a href="#">»</a></li>
-	    </ul>
-	  </div>
+		<div class="box-footer clearfix">
+		  <ul class="pagination pagination-sm no-margin pull-right">
+		    {{ page_macros.pagination_widget(pagination,'ipmage.index') }}
+		  </ul>
+	       </div>
 	</div>
     </div>
     <!-- endtable-->
@@ -164,5 +178,13 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+{% endblock %}
+
+{% block script %}
+<script>
+$(function(){
+    $('#AddNetModal').modal(options)
+})
+</script>
 {% endblock %}
 
