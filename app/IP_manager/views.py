@@ -1,7 +1,8 @@
 from datetime import datetime
-from flask import render_template,session,redirect,url_for,request, flash,current_app
+from flask import render_template,session,redirect,url_for,request, flash,current_app, jsonify
 from flask_login import login_required
 from . import ipmage
+from sqlalchemy import and_
 from .models import Network, Ips
 from .forms import addNetForm
 from .. import db
@@ -50,4 +51,33 @@ def get_network():
     page = request.args.get('page',1,type=int)
     pagination = Ips.query.filter_by(network_id=id).order_by(Ips.ip.desc()).paginate(page,per_page=current_app.config['FLASKY_IP_PER_PAGE'],error_out=False)
     ip_list = pagination.items
-    return render_template("IPmanage/ip_detail.html",ip_list=ip_list,pagination=pagination)
+    return render_template("IPmanage/ip_detail.html",network_id=id,ip_list=ip_list,pagination=pagination)
+
+@ipmage.route('/ip/search_ip/',methods=['POST'])
+@login_required
+def search_ip():
+    if request.method =="POST":
+        column = request.values.get("column",None)
+        input_info = request.values.get("input",None)
+        network_id = request.values.get("network_id",None)
+        if column and input_info:
+            if column == "ip":
+                search_ip = Ips.query.filter(and_(Ips.network_id==int(network_id),Ips.ip==input_info)).first()
+                if search_ip:
+                    search_info = search_ip.to_dic()
+                    return  jsonify({"type":"ip","data":search_info})
+                else:return jsonify({"data":None})
+            elif column == "mac":
+                search_mac = Ips.query.filter(and_(Ips.network_id==int(network_id),Ips.mac==input_info)).first()
+                if search_mac:
+                    search_info = search_mac.to_dic()
+                    return jsonify({"type":"mac","data":search_info})
+                else:return jsonify({"data":None})
+            else:
+                search_port = Ips.query.filter(and_(Ips.network_id==int(network_id),Ips.ports.like("%"+input_info+"%"))).all()
+                if search_port:
+                    search_info = [x.to_dic() for x in search_port]
+                    return jsonify({"type":"ports","data":search_info})
+                else:return jsonify({"data":None})
+        else:
+            return jsonify({"data":None})

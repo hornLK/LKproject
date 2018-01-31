@@ -152,13 +152,14 @@
 	      {% for network in data.networks %}
 	      <tr>
 		<td><input type="checkbox" id="network-{{ network.id }}"></td>
-		<td>{{ loop.index }}.&nbsp;{{ network.netname }}&nbsp;/&nbsp;{{ network.network }}<a href="{{ network.page_json().url }}">>>详情页</a></td>
+		<td>{{ loop.index }}.&nbsp;{{ network.netname }}&nbsp;/&nbsp;{{ network.network }}<a href="{{ url_for("ipmage.get_network",id=network.id,page=1) }}">>>详情页</a></td>
 		<td>{{ network.vlan }}</td>
 		<td>{{ network.desc }}</td>
 		<td>
 		  <div class="progress progress-xs">
 		    <div class="progress-bar progress-bar-primary" style="width:{{ network.active_ip*100//network.total_ip }}%"></div>
 		  </div>
+		  <span class="label label-warning">{{ network.active_ip }}/{{ network.total_ip }}</span>
 		</td>
 		<td><span class="badge bg-red">{{ network.active_ip*100//network.total_ip }}%</span></td>
 	      </tr>
@@ -183,7 +184,7 @@
 {% block script %}
 <script>
 $(function(){
-    $('#AddNetModal').modal(options)
+    $('#AddNetModal').modal("hide")
 })
 </script>
 {% endblock %}
